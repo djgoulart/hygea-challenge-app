@@ -12,6 +12,7 @@ import { Loading } from '@components/loading'
 
 import { CreateUser } from '@screens/create-user'
 import ThemeProvider from 'src/theme/theme-provider'
+import { ListUsers } from '@screens/list-users'
 
 // Ignore log notification by message:
 LogBox.ignoreLogs(['Warning: ...'])
@@ -24,15 +25,15 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <Box>
+      <>
         <StatusBar
           barStyle="light-content"
           backgroundColor="transparent"
           translucent
         />
 
-        {fontsLoaded ? <CreateUser /> : <Loading />}
-      </Box>
+        {fontsLoaded ? <ListUsers /> : <Loading />}
+      </>
     </ThemeProvider>
   )
 }
