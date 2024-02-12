@@ -1,0 +1,10 @@
+import React from 'react'
+import { Center, Spinner } from 'native-base'
+
+export function Loading() {
+  return (
+    <Center w={'full'} flex={1} bg="gray.700">
+      <Spinner color="green.700" />
+    </Center>
+  )
+}
