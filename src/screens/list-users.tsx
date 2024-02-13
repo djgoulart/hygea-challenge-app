@@ -1,15 +1,23 @@
 import React, { useState } from 'react'
 import { Image, Text, VStack, useTheme, FlatList, HStack } from 'native-base'
-import { PlusCircle } from 'lucide-react-native'
+import { PlusCircle, Search } from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
 import { HomeHeader } from '@components/home-header'
 import { UserCard } from '@components/user-card'
 import { TouchableOpacity } from 'react-native'
+import { SheetManager } from 'react-native-actions-sheet'
 
 export function ListUsers() {
   const [users, setUsers] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
   const { colors } = useTheme()
+
+  const handleSearchPress = () => {
+    SheetManager.show('user-info-sheet', {
+      payload: { query: '' },
+    })
+  }
+
   return (
     <VStack bg="black" h="full" w="full" flex="1">
       <Image
@@ -22,24 +30,46 @@ export function ListUsers() {
       />
       <HomeHeader />
       <VStack px={4} maxH="3/4">
-        <HStack mb={4} alignItems="center" justifyContent="space-between">
-          <Text color="gray.100" fontSize="lg">
-            Usuários{` (${users.length})`}
-          </Text>
+        <HStack
+          mb={4}
+          alignItems="center"
+          justifyContent="space-between"
+          borderBottomColor="gray.600"
+          borderBottomWidth={1}
+          pb={4}
+        >
           <TouchableOpacity activeOpacity={0.7}>
             <HStack
-              rounded="sm"
+              rounded="md"
               bg="green.500"
               alignItems="center"
               justifyContent="space-around"
-              w={24}
               py={2}
               px={4}
             >
-              <Text color="gray.100" fontFamily="heading">
+              <Text
+                color="gray.100"
+                fontFamily="heading"
+                pr={1}
+                textTransform="uppercase"
+              >
                 Novo
               </Text>
               <PlusCircle size={24} color={colors.gray[100]} />
+            </HStack>
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.7} onPress={handleSearchPress}>
+            <HStack
+              rounded="md"
+              bg="transparent"
+              alignItems="center"
+              justifyContent="space-around"
+              py={2}
+              px={4}
+              borderColor="green.500"
+              borderWidth={1}
+            >
+              <Search size={24} color={colors.green[500]} />
             </HStack>
           </TouchableOpacity>
         </HStack>

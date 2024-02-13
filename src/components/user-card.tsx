@@ -2,7 +2,6 @@ import { ArrowRight, User } from 'lucide-react-native'
 import { Center, HStack, Heading, Text, VStack, useTheme } from 'native-base'
 import React from 'react'
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
-import { SheetManager } from 'react-native-actions-sheet'
 
 export type User = {
   name: string
@@ -19,9 +18,7 @@ export function UserCard({ user, ...rest }: UserCardProps) {
   const { colors } = useTheme()
 
   const handlePress = () => {
-    SheetManager.show('user-info-sheet', {
-      payload: { user },
-    })
+    console.log('press', user)
   }
 
   return (
@@ -33,7 +30,7 @@ export function UserCard({ user, ...rest }: UserCardProps) {
         rounded="md"
         alignItems="center"
         justifyContent="space-between"
-        my={1}
+        mb={2}
       >
         <Center bg="transparent" width={10} h={10} rounded="full" mr={4}>
           <User width={28} height={28} color={colors.gray[300]} />
