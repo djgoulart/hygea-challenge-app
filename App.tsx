@@ -12,9 +12,8 @@ import {
 
 import { Loading } from '@components/loading'
 
-import { CreateUser } from '@screens/create-user'
 import ThemeProvider from 'src/theme/theme-provider'
-import { ListUsers } from '@screens/list-users'
+import { Routes } from '@routes/index'
 
 // Ignore log notification by message:
 LogBox.ignoreLogs(['Warning: ...'])
@@ -34,7 +33,7 @@ export default function App() {
           translucent
         />
 
-        {fontsLoaded ? <ListUsers /> : <Loading />}
+        {fontsLoaded ? <Routes /> : <Loading />}
       </SheetProvider>
     </ThemeProvider>
   )

@@ -1,9 +1,14 @@
-import { ArrowRight, User } from 'lucide-react-native'
+import { ChevronRight, User } from 'lucide-react-native'
 import { Center, HStack, Heading, Text, VStack, useTheme } from 'native-base'
 import React from 'react'
-import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
+import {
+  GestureResponderEvent,
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from 'react-native'
 
 export type User = {
+  id: string
   name: string
   email: string
   address: string
@@ -12,17 +17,14 @@ export type User = {
 
 type UserCardProps = TouchableOpacityProps & {
   user: User
+  onPress: (event: GestureResponderEvent) => void
 }
 
-export function UserCard({ user, ...rest }: UserCardProps) {
+export function UserCard({ user, onPress, ...rest }: UserCardProps) {
   const { colors } = useTheme()
 
-  const handlePress = () => {
-    console.log('press', user)
-  }
-
   return (
-    <TouchableOpacity {...rest} activeOpacity={0.8} onPress={handlePress}>
+    <TouchableOpacity {...rest} activeOpacity={0.8} onPress={onPress}>
       <HStack
         bg="gray.500"
         py={4}
@@ -42,7 +44,7 @@ export function UserCard({ user, ...rest }: UserCardProps) {
           <Text color="gray.300">{user.email}</Text>
         </VStack>
         <Center>
-          <ArrowRight width={28} height={28} color={colors.gray[300]} />
+          <ChevronRight width={28} height={28} color={colors.gray[300]} />
         </Center>
       </HStack>
     </TouchableOpacity>

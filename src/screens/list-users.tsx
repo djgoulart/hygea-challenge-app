@@ -7,9 +7,16 @@ import { HomeHeader } from '@components/home-header'
 import { UserCard } from '@components/user-card'
 import { TouchableOpacity } from 'react-native'
 import { SheetManager } from 'react-native-actions-sheet'
+import { PublicNavigatorRoutesProps } from '@routes/public-routes'
+import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-export function ListUsers() {
-  const [users, setUsers] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+export type ListUsersProps = NativeStackScreenProps<
+  PublicNavigatorRoutesProps,
+  'listUsers'
+>
+
+export function ListUsers({ navigation }: ListUsersProps) {
+  const [users] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
   const { colors } = useTheme()
 
   const handleSearchPress = () => {
@@ -18,8 +25,16 @@ export function ListUsers() {
     })
   }
 
+  const handleNewUser = () => {
+    navigation.navigate('createUser')
+  }
+
+  const handleShowUserDetails = (userId: string) => {
+    navigation.navigate('editUser', { userId })
+  }
+
   return (
-    <VStack bg="black" h="full" w="full" flex="1">
+    <VStack h="full" w="full" flex="1">
       <Image
         source={BackgroundImg}
         alt="pessoas em equipe"
@@ -38,7 +53,7 @@ export function ListUsers() {
           borderBottomWidth={1}
           pb={4}
         >
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity activeOpacity={0.7} onPress={handleNewUser}>
             <HStack
               rounded="md"
               bg="green.500"
@@ -79,11 +94,13 @@ export function ListUsers() {
           renderItem={(item) => (
             <UserCard
               user={{
+                id: 'user-1',
                 name: 'Diego',
                 email: 'diego@test.com',
                 address: 'Avenida A, 333',
                 birthDate: new Date(1988, 0, 19),
               }}
+              onPress={() => handleShowUserDetails('user-1')}
             />
           )}
           showsVerticalScrollIndicator={false}

@@ -1,27 +1,43 @@
 import React from 'react'
 import {
   Center,
+  HStack,
   Heading,
   Image,
   ScrollView,
-  Text,
   VStack,
   useTheme,
 } from 'native-base'
-import { Users } from 'lucide-react-native'
+import { ChevronLeft } from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
 import { Input } from '@components/input'
 import { Button } from '@components/button'
-import { KeyboardAvoidingView, Platform } from 'react-native'
+import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
 import { DatePicker } from '@components/date-picker'
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker'
-import { useNavigation } from '@react-navigation/native'
+import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { PublicNavigatorRoutesProps } from '@routes/public-routes'
 
-export function CreateUser() {
+/* type User = {
+  id: string
+  name: string
+  email: string
+  address: string
+  birthDate: Date
+} */
+
+export type EditUserProps = NativeStackScreenProps<
+  PublicNavigatorRoutesProps,
+  'editUser'
+>
+
+export function EditUser({ navigation, route }: EditUserProps) {
   const { colors } = useTheme()
-  const navigation = useNavigation<PublicNavigatorRoutesProps>()
+  // const navigation = useNavigation<PublicNavigatorRoutesProps>()
+
+  const { userId } = route.params
+  console.log('USER', userId)
 
   const onSelectDate = (e: DateTimePickerEvent, selectedDate?: Date) => {
     console.log('Selected', e, selectedDate)
@@ -29,6 +45,10 @@ export function CreateUser() {
 
   const handleBack = () => {
     navigation.navigate('listUsers')
+  }
+
+  const handleDeleteUser = () => {
+    console.log('DELETE', userId)
   }
 
   return (
@@ -57,11 +77,29 @@ export function CreateUser() {
           />
 
           <Center my={24}>
-            <VStack alignItems="center" justifyContent="center">
-              <Users width={40} height={40} color={colors.green[500]} />
-              <Heading color="gray.100">Cadastro de Usuários</Heading>
-            </VStack>
-            <Text color="white">Hygea Fullstack Code Challenge</Text>
+            <HStack
+              alignItems="center"
+              justifyContent="space-between"
+              width="full"
+            >
+              <TouchableOpacity activeOpacity={0.7} onPress={handleBack}>
+                <HStack
+                  rounded="md"
+                  alignItems="center"
+                  justifyContent="space-around"
+                  borderWidth={0}
+                >
+                  <ChevronLeft size={36} color={colors.green[500]} />
+                </HStack>
+              </TouchableOpacity>
+              <HStack
+                alignItems="center"
+                justifyContent="flex-end"
+                flexGrow={1}
+              >
+                <Heading color="gray.100">Diego</Heading>
+              </HStack>
+            </HStack>
           </Center>
 
           <Input placeholder="Nome" />
@@ -76,17 +114,12 @@ export function CreateUser() {
 
           <DatePicker onChangeEvent={onSelectDate} />
 
+          <Button title="Salvar" mt={24} />
           <Button
-            title="Cadastrar"
-            isLoading
-            isLoadingText="Enviando..."
-            mt={24}
-          />
-          <Button
-            title="Voltar"
-            variant="outline"
+            title="Excluir"
+            variant="danger"
             mt={4}
-            onPress={handleBack}
+            onPress={handleDeleteUser}
           />
         </VStack>
       </ScrollView>
