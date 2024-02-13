@@ -2,21 +2,30 @@ import { ArrowRight, User } from 'lucide-react-native'
 import { Center, HStack, Heading, Text, VStack, useTheme } from 'native-base'
 import React from 'react'
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
+import { SheetManager } from 'react-native-actions-sheet'
+
+export type User = {
+  name: string
+  email: string
+  address: string
+  birthDate: Date
+}
 
 type UserCardProps = TouchableOpacityProps & {
-  user: {
-    name: string
-    email: string
-    address: string
-    birthDate: Date
-  }
+  user: User
 }
 
 export function UserCard({ user, ...rest }: UserCardProps) {
   const { colors } = useTheme()
 
+  const handlePress = () => {
+    SheetManager.show('user-info-sheet', {
+      payload: { user },
+    })
+  }
+
   return (
-    <TouchableOpacity {...rest} activeOpacity={0.8}>
+    <TouchableOpacity {...rest} activeOpacity={0.8} onPress={handlePress}>
       <HStack
         bg="gray.500"
         py={4}

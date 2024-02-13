@@ -1,7 +1,9 @@
 /* eslint-disable camelcase */
 import React from 'react'
 import { LogBox, StatusBar } from 'react-native'
-import { Box } from 'native-base'
+import { SheetProvider } from 'react-native-actions-sheet'
+import '@components/action-sheets/register'
+
 import {
   useFonts,
   Roboto_400Regular,
@@ -25,7 +27,7 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <>
+      <SheetProvider>
         <StatusBar
           barStyle="light-content"
           backgroundColor="transparent"
@@ -33,7 +35,7 @@ export default function App() {
         />
 
         {fontsLoaded ? <ListUsers /> : <Loading />}
-      </>
+      </SheetProvider>
     </ThemeProvider>
   )
 }
