@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Center,
   HStack,
@@ -9,39 +9,54 @@ import {
   useTheme,
 } from 'native-base'
 import { ChevronLeft } from 'lucide-react-native'
+import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
+import { DateTimePickerEvent } from '@react-native-community/datetimepicker'
+import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { useForm, Controller } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 
+import { DatePicker } from '@components/date-picker'
 import BackgroundImg from '@assets/bg.png'
 import { Input } from '@components/input'
 import { Button } from '@components/button'
-import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
-import { DatePicker } from '@components/date-picker'
-import { DateTimePickerEvent } from '@react-native-community/datetimepicker'
-import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { PublicNavigatorRoutesProps } from '@routes/public-routes'
-
-/* type User = {
-  id: string
-  name: string
-  email: string
-  address: string
-  birthDate: Date
-} */
+import { fetchUserInfo } from '@services/fetch-user-info'
 
 export type EditUserProps = NativeStackScreenProps<
   PublicNavigatorRoutesProps,
   'editUser'
 >
 
+const editUserSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+  address: z.string(),
+  birthDate: z.date(),
+})
+
+type EditUserSchema = z.infer<typeof editUserSchema>
+
 export function EditUser({ navigation, route }: EditUserProps) {
   const { colors } = useTheme()
-  // const navigation = useNavigation<PublicNavigatorRoutesProps>()
-
   const { userId } = route.params
-  console.log('USER', userId)
 
-  const onSelectDate = (e: DateTimePickerEvent, selectedDate?: Date) => {
-    console.log('Selected', e, selectedDate)
-  }
+  const { data: userInfo, isLoading } = useQuery({
+    queryKey: ['user-info', userId],
+    queryFn: async () => {
+      return fetchUserInfo(userId)
+    },
+  })
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    s,
+  } = useForm<EditUserSchema>({
+    resolver: zodResolver(editUserSchema),
+  })
 
   const handleBack = () => {
     navigation.navigate('listUsers')
@@ -50,6 +65,13 @@ export function EditUser({ navigation, route }: EditUserProps) {
   const handleDeleteUser = () => {
     console.log('DELETE', userId)
   }
+
+  async function handleEditUser(data: EditUserSchema) {
+    console.log(data)
+    // navigation.navigate('listUsers')
+  }
+
+  useEffect(() => console.log(userInfo, isLoading), [userInfo, isLoading])
 
   return (
     <KeyboardAvoidingView
@@ -97,24 +119,70 @@ export function EditUser({ navigation, route }: EditUserProps) {
                 justifyContent="flex-end"
                 flexGrow={1}
               >
-                <Heading color="gray.100">Diego</Heading>
+                <Heading color="gray.100">{userInfo?.user.name}</Heading>
               </HStack>
             </HStack>
           </Center>
 
-          <Input placeholder="Nome" />
-
-          <Input
-            keyboardType="email-address"
-            placeholder="E-mail"
-            autoCapitalize="none"
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Nome"
+                onChangeText={onChange}
+                value={value}
+                defaultValue={userInfo?.user.name}
+              />
+            )}
           />
 
-          <Input placeholder="Endereço" />
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                keyboardType="email-address"
+                placeholder="E-mail"
+                autoCapitalize="none"
+                onChangeText={onChange}
+                value={value}
+                defaultValue={userInfo?.user.email}
+              />
+            )}
+          />
 
-          <DatePicker onChangeEvent={onSelectDate} />
+          <Controller
+            control={control}
+            name="birthDate"
+            render={({ field: { onChange, value } }) => (
+              <DatePicker
+                onChangeEvent={onChange}
+                value={value || userInfo?.user.birthDate}
+              />
+            )}
+          />
 
-          <Button title="Salvar" mt={24} />
+          <Controller
+            control={control}
+            name="address"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Endereço"
+                onChangeText={onChange}
+                value={value}
+                defaultValue={userInfo?.user.address}
+                onSubmitEditing={handleSubmit(handleEditUser)}
+              />
+            )}
+          />
+
+          <Button
+            title="Salvar"
+            mt={24}
+            onPress={handleSubmit(handleEditUser)}
+          />
+
           <Button
             title="Excluir"
             variant="danger"

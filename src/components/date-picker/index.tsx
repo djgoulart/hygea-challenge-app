@@ -14,22 +14,17 @@ type DatePickerProps = {
 }
 
 export function DatePicker({ onChangeEvent, value }: DatePickerProps) {
-  const [date, setDate] = useState<Date>(value || new Date())
-  const [touched, setTouched] = useState(false)
+  const [date, setDate] = useState<Date>(new Date(value!) || new Date())
 
   const dateString = useMemo(() => {
-    if (touched) {
-      return dayjs(date).format('DD/MM/YYYY')
-    }
-
-    return 'Data de Nascimento'
-  }, [date, touched])
+    if (!value) return 'Data de aniversário'
+    return dayjs(date).format('DD/MM/YYYY')
+  }, [date])
 
   const handleOnChange = (e: DateTimePickerEvent, selectedDate?: Date) => {
     // console.log(e, selectedDate)
 
     if (e.type === 'set' && selectedDate) {
-      setTouched(true)
       setDate(selectedDate)
     }
 

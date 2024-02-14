@@ -63,9 +63,8 @@ export function CreateUser({ navigation }: CreateUserProps) {
   })
 
   async function handleCreateUser(data: CreateUserSchema) {
-    console.log('DATA', data)
     await createUserFn(data)
-    // navigation.navigate('listUsers')
+    navigation.navigate('listUsers')
   }
 
   useEffect(() => console.log('EE', errors), [errors])

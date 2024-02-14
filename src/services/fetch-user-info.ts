@@ -9,11 +9,13 @@ type User = {
 }
 
 export type FetchUsersResponse = {
-  users: User[]
+  user: User
 }
 
-export async function fetchUsers(): Promise<FetchUsersResponse> {
-  const response = await api.get('user/list')
+export async function fetchUserInfo(
+  userId: string,
+): Promise<FetchUsersResponse> {
+  const response = await api.get(`user/${userId}`)
 
   return response.data
 }

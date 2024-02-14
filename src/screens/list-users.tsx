@@ -9,7 +9,7 @@ import { TouchableOpacity } from 'react-native'
 import { SheetManager } from 'react-native-actions-sheet'
 import { PublicNavigatorRoutesProps } from '@routes/public-routes'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchUsers } from '@services/fetch-users'
 
 export type ListUsersProps = NativeStackScreenProps<
@@ -19,6 +19,7 @@ export type ListUsersProps = NativeStackScreenProps<
 
 export function ListUsers({ navigation }: ListUsersProps) {
   const { colors } = useTheme()
+  const queryClient = useQueryClient()
 
   const handleSearchPress = () => {
     SheetManager.show('user-info-sheet', {
@@ -30,7 +31,7 @@ export function ListUsers({ navigation }: ListUsersProps) {
     navigation.navigate('createUser')
   }
 
-  const handleShowUserDetails = (userId: string) => {
+  const handleShowUserDetails = async (userId: string) => {
     navigation.navigate('editUser', { userId })
   }
 

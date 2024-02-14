@@ -20,7 +20,7 @@ type CreateUserResponseData = {
 export async function createUser(
   data: CreateUserRequestData,
 ): Promise<CreateUserResponseData> {
-  const response = await api.post('users', {
+  const response = await api.post('user/create', {
     data,
   })
 
