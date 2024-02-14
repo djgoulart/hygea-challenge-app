@@ -3,6 +3,7 @@ import React from 'react'
 import { LogBox, StatusBar } from 'react-native'
 import { SheetProvider } from 'react-native-actions-sheet'
 import '@components/action-sheets/register'
+import { QueryClientProvider } from '@tanstack/react-query'
 
 import {
   useFonts,
@@ -14,6 +15,7 @@ import { Loading } from '@components/loading'
 
 import ThemeProvider from 'src/theme/theme-provider'
 import { Routes } from '@routes/index'
+import { queryClient } from '@utils/react-query'
 
 // Ignore log notification by message:
 LogBox.ignoreLogs(['Warning: ...'])
@@ -26,15 +28,17 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <SheetProvider>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor="transparent"
-          translucent
-        />
+      <QueryClientProvider client={queryClient}>
+        <SheetProvider>
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor="transparent"
+            translucent
+          />
 
-        {fontsLoaded ? <Routes /> : <Loading />}
-      </SheetProvider>
+          {fontsLoaded ? <Routes /> : <Loading />}
+        </SheetProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   )
 }

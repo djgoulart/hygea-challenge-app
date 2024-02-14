@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Center,
   Heading,
@@ -15,21 +15,60 @@ import { Input } from '@components/input'
 import { Button } from '@components/button'
 import { KeyboardAvoidingView, Platform } from 'react-native'
 import { DatePicker } from '@components/date-picker'
-import { DateTimePickerEvent } from '@react-native-community/datetimepicker'
-import { useNavigation } from '@react-navigation/native'
 import { PublicNavigatorRoutesProps } from '@routes/public-routes'
+import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { useForm, Controller } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createUser } from '@services/create-user'
 
-export function CreateUser() {
+export type CreateUserProps = NativeStackScreenProps<
+  PublicNavigatorRoutesProps,
+  'createUser'
+>
+
+const createUserSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+  address: z.string(),
+  birthDate: z.date(),
+})
+
+type CreateUserSchema = z.infer<typeof createUserSchema>
+
+export function CreateUser({ navigation }: CreateUserProps) {
   const { colors } = useTheme()
-  const navigation = useNavigation<PublicNavigatorRoutesProps>()
+  const queryClient = useQueryClient()
 
-  const onSelectDate = (e: DateTimePickerEvent, selectedDate?: Date) => {
-    console.log('Selected', e, selectedDate)
-  }
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CreateUserSchema>({
+    resolver: zodResolver(createUserSchema),
+  })
 
   const handleBack = () => {
     navigation.navigate('listUsers')
   }
+
+  const { mutateAsync: createUserFn, isPending } = useMutation({
+    mutationFn: async (data: CreateUserSchema) => {
+      return await createUser(data)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['users-list'] })
+    },
+  })
+
+  async function handleCreateUser(data: CreateUserSchema) {
+    console.log('DATA', data)
+    await createUserFn(data)
+    // navigation.navigate('listUsers')
+  }
+
+  useEffect(() => console.log('EE', errors), [errors])
 
   return (
     <KeyboardAvoidingView
@@ -64,23 +103,55 @@ export function CreateUser() {
             <Text color="white">Hygea Fullstack Code Challenge</Text>
           </Center>
 
-          <Input placeholder="Nome" />
-
-          <Input
-            keyboardType="email-address"
-            placeholder="E-mail"
-            autoCapitalize="none"
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, value } }) => (
+              <Input placeholder="Nome" onChangeText={onChange} value={value} />
+            )}
           />
 
-          <Input placeholder="Endereço" />
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                keyboardType="email-address"
+                placeholder="E-mail"
+                autoCapitalize="none"
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+          />
 
-          <DatePicker onChangeEvent={onSelectDate} />
+          <Controller
+            control={control}
+            name="birthDate"
+            render={({ field: { onChange, value } }) => (
+              <DatePicker onChangeEvent={onChange} value={value} />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="address"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Endereço"
+                onChangeText={onChange}
+                value={value}
+                onSubmitEditing={handleSubmit(handleCreateUser)}
+              />
+            )}
+          />
 
           <Button
             title="Cadastrar"
-            isLoading
-            isLoadingText="Enviando..."
             mt={24}
+            onPress={handleSubmit(handleCreateUser)}
+            isLoading={isPending}
+            isLoadingText="Enviando..."
           />
           <Button
             title="Voltar"

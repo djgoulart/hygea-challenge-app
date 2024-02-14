@@ -19,6 +19,7 @@ export function DatePickerTrigger({ title, ...rest }: ButtonProps) {
       w="full"
       h={14}
       px={4}
+      mb={4}
       bg="gray.700"
       borderWidth={0}
       borderColor="green.500"

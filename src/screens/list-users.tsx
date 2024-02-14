@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Image, Text, VStack, useTheme, FlatList, HStack } from 'native-base'
 import { PlusCircle, Search } from 'lucide-react-native'
 
@@ -9,6 +9,8 @@ import { TouchableOpacity } from 'react-native'
 import { SheetManager } from 'react-native-actions-sheet'
 import { PublicNavigatorRoutesProps } from '@routes/public-routes'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { useQuery } from '@tanstack/react-query'
+import { fetchUsers } from '@services/fetch-users'
 
 export type ListUsersProps = NativeStackScreenProps<
   PublicNavigatorRoutesProps,
@@ -16,7 +18,6 @@ export type ListUsersProps = NativeStackScreenProps<
 >
 
 export function ListUsers({ navigation }: ListUsersProps) {
-  const [users] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
   const { colors } = useTheme()
 
   const handleSearchPress = () => {
@@ -32,6 +33,11 @@ export function ListUsers({ navigation }: ListUsersProps) {
   const handleShowUserDetails = (userId: string) => {
     navigation.navigate('editUser', { userId })
   }
+
+  const { data: usersList } = useQuery({
+    queryKey: ['users-list'],
+    queryFn: fetchUsers,
+  })
 
   return (
     <VStack h="full" w="full" flex="1">
@@ -89,18 +95,18 @@ export function ListUsers({ navigation }: ListUsersProps) {
           </TouchableOpacity>
         </HStack>
         <FlatList
-          data={users}
-          keyExtractor={(item) => item.toString()}
-          renderItem={(item) => (
+          data={usersList?.users}
+          keyExtractor={({ id }) => id}
+          renderItem={({ item: user }) => (
             <UserCard
               user={{
-                id: 'user-1',
-                name: 'Diego',
-                email: 'diego@test.com',
-                address: 'Avenida A, 333',
-                birthDate: new Date(1988, 0, 19),
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                address: user.address,
+                birthDate: new Date(user.birthDate),
               }}
-              onPress={() => handleShowUserDetails('user-1')}
+              onPress={() => handleShowUserDetails(user.id)}
             />
           )}
           showsVerticalScrollIndicator={false}

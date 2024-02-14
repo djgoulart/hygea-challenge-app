@@ -9,11 +9,12 @@ import {
 import { DatePickerTrigger } from './trigger'
 
 type DatePickerProps = {
-  onChangeEvent?: (e: DateTimePickerEvent, date?: Date) => void
+  onChangeEvent?: (date?: Date) => void
+  value?: Date
 }
 
-export function DatePicker({ onChangeEvent }: DatePickerProps) {
-  const [date, setDate] = useState<Date>(new Date())
+export function DatePicker({ onChangeEvent, value }: DatePickerProps) {
+  const [date, setDate] = useState<Date>(value || new Date())
   const [touched, setTouched] = useState(false)
 
   const dateString = useMemo(() => {
@@ -32,7 +33,7 @@ export function DatePicker({ onChangeEvent }: DatePickerProps) {
       setDate(selectedDate)
     }
 
-    onChangeEvent && onChangeEvent(e, selectedDate)
+    onChangeEvent && onChangeEvent(selectedDate)
   }
 
   const showDatePicker = () => {
