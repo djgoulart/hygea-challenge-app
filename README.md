@@ -1,14 +1,19 @@
 
 # Hygea FullStack Test - App
 
+![Lista de usuários](https://github.com/djgoulart/hygea-challenge-app/blob/e692d73ef6c07c6a85f5c5e0d52930883d73884b/readme/list.jpeg "lista de usuarios")
+
+
 O desafio consiste em desenvolver um CRUD para uma entidade já existente chamada 'USER'. Além disso, é necessário criar um aplicativo mobile utilizando React Native que consuma a API, apresentando as funcionalidades de CRUD para essa entidade de USER. Na função de LIST, defina e implemente alguns filtros.
 
 Um ponto EXTRA será a inclusão de uma funcionalidade de busca com autocompletar na lista de usuários.
 
-## Entregáveis do Aplicativo
-#### Implementar os endpoints listados abaixo:
+## Entregáveis do Desafio
+- [Aplicativo Mobile](https://github.com/djgoulart/hygea-challenge-app)
+- [Aplicação Backend](https://github.com/djgoulart/test-hygea-backend)
+### Tarefas do Aplicativo:
 - Implementar uma Screen para listar os uruários (GET - user/list)
-- Implementar uma Screen para visualizar os dados de um usuário(GET - user/:id)
+- Implementar uma Screen para visualizar os dados de um usuário (GET - user/:id)
 - Implementar uma Screen para o cadastro de novos usuários (POST - user/create)
 - DELETE - Implementar mecanismos para exclusão de usuários (user/delete/:id)
 - Implementar uma Screen para a alteração dos dados de um usuário (PUT - user/:id/edit)
