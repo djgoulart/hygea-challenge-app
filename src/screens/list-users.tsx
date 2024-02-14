@@ -6,7 +6,6 @@ import BackgroundImg from '@assets/bg.png'
 import { HomeHeader } from '@components/home-header'
 import { UserCard } from '@components/user-card'
 import { TouchableOpacity } from 'react-native'
-import { SheetManager } from 'react-native-actions-sheet'
 import { PublicNavigatorRoutesProps } from '@routes/public-routes'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
@@ -19,12 +18,6 @@ export type ListUsersProps = NativeStackScreenProps<
 
 export function ListUsers({ navigation }: ListUsersProps) {
   const { colors } = useTheme()
-
-  const handleSearchPress = () => {
-    SheetManager.show('user-info-sheet', {
-      payload: { query: '' },
-    })
-  }
 
   const handleNewUser = () => {
     navigation.navigate('createUser')
@@ -79,7 +72,10 @@ export function ListUsers({ navigation }: ListUsersProps) {
               <PlusCircle size={24} color={colors.gray[100]} />
             </HStack>
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.7} onPress={handleSearchPress}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate('searchUsers')}
+          >
             <HStack
               rounded="md"
               bg="transparent"

@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { ListUsers } from '@screens/list-users'
 import { CreateUser } from '@screens/create-user'
 import { EditUser } from '@screens/edit-user'
+import { SearchUsers } from '@screens/search-users'
 
 type PublicRoutes = {
   listUsers: undefined
@@ -11,6 +12,7 @@ type PublicRoutes = {
   editUser: {
     userId: string
   }
+  searchUsers: undefined
 }
 
 export type PublicNavigatorRoutesProps = PublicRoutes & {
@@ -31,6 +33,7 @@ export function PublicRoutes() {
       <Screen name="listUsers" component={ListUsers} />
       <Screen name="createUser" component={CreateUser} />
       <Screen name="editUser" component={EditUser} />
+      <Screen name="searchUsers" component={SearchUsers} />
     </Navigator>
   )
 }
