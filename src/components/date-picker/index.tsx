@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { SafeAreaView } from 'react-native'
 import dayjs from 'dayjs'
 import {
@@ -14,16 +14,14 @@ type DatePickerProps = {
 }
 
 export function DatePicker({ onChangeEvent, value }: DatePickerProps) {
-  const [date, setDate] = useState<Date>(new Date(value!) || new Date())
+  const [date, setDate] = useState<Date>(new Date())
 
   const dateString = useMemo(() => {
     if (!value) return 'Data de aniversário'
     return dayjs(date).format('DD/MM/YYYY')
-  }, [date])
+  }, [date, value])
 
   const handleOnChange = (e: DateTimePickerEvent, selectedDate?: Date) => {
-    // console.log(e, selectedDate)
-
     if (e.type === 'set' && selectedDate) {
       setDate(selectedDate)
     }
@@ -39,6 +37,16 @@ export function DatePicker({ onChangeEvent, value }: DatePickerProps) {
       timeZoneName: 'America/Sao_Paulo',
     })
   }
+
+  useEffect(() => {
+    if (value) {
+      if (typeof value === 'string') {
+        setDate(new Date(value))
+      } else {
+        setDate(value)
+      }
+    }
+  }, [value])
 
   return (
     <SafeAreaView>

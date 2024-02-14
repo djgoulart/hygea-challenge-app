@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
   Center,
   HStack,
@@ -10,7 +10,6 @@ import {
 } from 'native-base'
 import { ChevronLeft } from 'lucide-react-native'
 import { KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native'
-import { DateTimePickerEvent } from '@react-native-community/datetimepicker'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
@@ -22,7 +21,10 @@ import BackgroundImg from '@assets/bg.png'
 import { Input } from '@components/input'
 import { Button } from '@components/button'
 import { PublicNavigatorRoutesProps } from '@routes/public-routes'
-import { fetchUserInfo } from '@services/fetch-user-info'
+import { fetchUserInfo } from '@services/fetch-user-info-service'
+import { editUser } from '@services/edit-user-service'
+import dayjs from 'dayjs'
+import { deleteUser } from '@services/delete-user-service'
 
 export type EditUserProps = NativeStackScreenProps<
   PublicNavigatorRoutesProps,
@@ -33,45 +35,74 @@ const editUserSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   address: z.string(),
-  birthDate: z.date(),
+  birthDate: z
+    .string()
+    .refine(
+      (value) => {
+        return dayjs(new Date(value)).isValid()
+      },
+      {
+        message: 'invalid date',
+      },
+    )
+    .transform((value) => new Date(value)),
 })
 
 type EditUserSchema = z.infer<typeof editUserSchema>
 
 export function EditUser({ navigation, route }: EditUserProps) {
   const { colors } = useTheme()
+  const queryClient = useQueryClient()
   const { userId } = route.params
 
-  const { data: userInfo, isLoading } = useQuery({
+  const { data: userInfo } = useQuery({
     queryKey: ['user-info', userId],
     queryFn: async () => {
       return fetchUserInfo(userId)
     },
   })
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    s,
-  } = useForm<EditUserSchema>({
+  const { control, handleSubmit } = useForm<EditUserSchema>({
     resolver: zodResolver(editUserSchema),
+    values: {
+      name: userInfo?.user.name || '',
+      email: userInfo?.user.email || '',
+      birthDate: userInfo?.user.birthDate as Date,
+      address: userInfo?.user.address || '',
+    },
   })
 
   const handleBack = () => {
     navigation.navigate('listUsers')
   }
 
-  const handleDeleteUser = () => {
-    console.log('DELETE', userId)
+  const { mutateAsync: deleteUserFn, isPending: isDeleting } = useMutation({
+    mutationFn: async () => {
+      return await deleteUser(userId)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['users-list'] })
+    },
+  })
+
+  const handleDeleteUser = async () => {
+    await deleteUserFn()
+    navigation.navigate('listUsers')
   }
+
+  const { mutateAsync: editUserFn, isPending } = useMutation({
+    mutationFn: async (data: EditUserSchema) => {
+      return await editUser(userId, data)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-info', userId] })
+      queryClient.invalidateQueries({ queryKey: ['users-list'] })
+    },
+  })
 
   async function handleEditUser(data: EditUserSchema) {
-    console.log(data)
-    // navigation.navigate('listUsers')
+    await editUserFn(data)
   }
-
-  useEffect(() => console.log(userInfo, isLoading), [userInfo, isLoading])
 
   return (
     <KeyboardAvoidingView
@@ -131,7 +162,7 @@ export function EditUser({ navigation, route }: EditUserProps) {
               <Input
                 placeholder="Nome"
                 onChangeText={onChange}
-                value={value}
+                value={value || userInfo?.user.name}
                 defaultValue={userInfo?.user.name}
               />
             )}
@@ -146,7 +177,7 @@ export function EditUser({ navigation, route }: EditUserProps) {
                 placeholder="E-mail"
                 autoCapitalize="none"
                 onChangeText={onChange}
-                value={value}
+                value={value || userInfo?.user.email}
                 defaultValue={userInfo?.user.email}
               />
             )}
@@ -170,7 +201,7 @@ export function EditUser({ navigation, route }: EditUserProps) {
               <Input
                 placeholder="Endereço"
                 onChangeText={onChange}
-                value={value}
+                value={value || userInfo?.user.address}
                 defaultValue={userInfo?.user.address}
                 onSubmitEditing={handleSubmit(handleEditUser)}
               />
@@ -181,6 +212,8 @@ export function EditUser({ navigation, route }: EditUserProps) {
             title="Salvar"
             mt={24}
             onPress={handleSubmit(handleEditUser)}
+            isLoading={isPending}
+            isLoadingText="Salvando ..."
           />
 
           <Button
@@ -188,6 +221,8 @@ export function EditUser({ navigation, route }: EditUserProps) {
             variant="danger"
             mt={4}
             onPress={handleDeleteUser}
+            isLoading={isDeleting}
+            isLoadingText="Aguarde ..."
           />
         </VStack>
       </ScrollView>

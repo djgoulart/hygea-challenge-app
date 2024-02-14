@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
   Center,
   Heading,
@@ -21,7 +21,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createUser } from '@services/create-user'
+import { createUser } from '@services/create-user-service'
 
 export type CreateUserProps = NativeStackScreenProps<
   PublicNavigatorRoutesProps,
@@ -41,11 +41,7 @@ export function CreateUser({ navigation }: CreateUserProps) {
   const { colors } = useTheme()
   const queryClient = useQueryClient()
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<CreateUserSchema>({
+  const { control, handleSubmit } = useForm<CreateUserSchema>({
     resolver: zodResolver(createUserSchema),
   })
 
@@ -66,8 +62,6 @@ export function CreateUser({ navigation }: CreateUserProps) {
     await createUserFn(data)
     navigation.navigate('listUsers')
   }
-
-  useEffect(() => console.log('EE', errors), [errors])
 
   return (
     <KeyboardAvoidingView

@@ -1,7 +1,11 @@
 import axios from 'axios'
 
-// 'https://hygea-challenge-backend.onrender.com/users'
+let API_URL = 'https://hygea-challenge-backend.onrender.com/'
+
+if (__DEV__) {
+  API_URL = 'http://10.0.2.2:3333/'
+}
 
 export const api = axios.create({
-  baseURL: 'http://10.0.2.2:3333/',
+  baseURL: API_URL,
 })
