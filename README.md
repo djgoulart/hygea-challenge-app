@@ -41,7 +41,7 @@ Foram utilizados alguns conceitos de gerenciamento de State Http e uma component
 
 ## Ambiente de produção
 
-O aplicativo (Android) está disponível para download através do link: [https://expo.dev//accounts/djgoulart/projects/hygea-challenge/builds/f7dec94a-77e7-4198-8532-4965fb44f7df](https://expo.dev//accounts/djgoulart/projects/hygea-challenge/builds/f7dec94a-77e7-4198-8532-4965fb44f7df)
+O aplicativo (Android) está disponível para download através do link: [https://expo.dev//accounts/djgoulart/projects/hygea-challenge/builds/7c68132f-0741-4a93-a996-9800ca8dd7c3](https://expo.dev//accounts/djgoulart/projects/hygea-challenge/builds/7c68132f-0741-4a93-a996-9800ca8dd7c3)
 
 ## Rodando o localmente
 - instale as dependêndias do projeto ```npm install```
