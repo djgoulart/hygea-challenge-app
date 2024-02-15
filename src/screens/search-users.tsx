@@ -1,5 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { Image, VStack, useTheme, FlatList, HStack, Center } from 'native-base'
+import React, { useState } from 'react'
+import {
+  Image,
+  VStack,
+  useTheme,
+  FlatList,
+  HStack,
+  Center,
+  Spinner,
+} from 'native-base'
 import { Search } from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
@@ -11,8 +19,8 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchUsers } from '@services/fetch-users-service'
 import { Input } from '@components/input'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { debounce } from '@utils/debounce'
 import { SearchHeader } from '@components/search-header'
+import { useDebounce } from '@hooks/useDebounce'
 
 export type SearchUsersProps = NativeStackScreenProps<
   PublicNavigatorRoutesProps,
@@ -22,10 +30,7 @@ export type SearchUsersProps = NativeStackScreenProps<
 export function SearchUsers({ navigation }: SearchUsersProps) {
   const { colors } = useTheme()
   const { top } = useSafeAreaInsets()
-  const [searchParam, setSearchParam] = useState<string | undefined>()
-  const [debouncedSearchParam, setDebouncedSearchParam] = useState<
-    string | undefined
-  >()
+  const [searchParam, setSearchParam] = useState('')
 
   const handleBack = () => {
     navigation.navigate('listUsers')
@@ -35,19 +40,19 @@ export function SearchUsers({ navigation }: SearchUsersProps) {
     navigation.navigate('editUser', { userId })
   }
 
-  const { data: usersList } = useQuery({
-    queryKey: ['users-search', debouncedSearchParam],
-    queryFn: ({ signal }) => fetchUsers(debouncedSearchParam, signal),
-    enabled: !!debouncedSearchParam,
-  })
+  const debouncedSearch = useDebounce(searchParam.toLowerCase(), 500)
 
-  const debouncedUpdate = debounce(setDebouncedSearchParam, 1000)
+  const { data: usersList, isLoading } = useQuery({
+    queryKey: ['users-search', debouncedSearch],
+    queryFn: async () => {
+      return await fetchUsers(debouncedSearch)
+    },
+    enabled: !!debouncedSearch,
+  })
 
   async function handleSearch(value: string) {
     setSearchParam(value)
   }
-
-  useEffect(() => debouncedUpdate(searchParam?.toLowerCase()), [searchParam])
 
   return (
     <TouchableWithoutFeedback
@@ -84,7 +89,11 @@ export function SearchUsers({ navigation }: SearchUsersProps) {
               onChangeText={handleSearch}
               InputRightElement={
                 <Center bg="green.500" size={16}>
-                  <Search size={24} color={colors.green[100]} />
+                  {isLoading ? (
+                    <Spinner color="green.100" />
+                  ) : (
+                    <Search size={24} color={colors.green[100]} />
+                  )}
                 </Center>
               }
             />

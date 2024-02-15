@@ -12,15 +12,11 @@ export type FetchUsersResponse = {
   users: User[]
 }
 
-export async function fetchUsers(
-  search?: string,
-  signal?: AbortSignal,
-): Promise<FetchUsersResponse> {
+export async function fetchUsers(search?: string): Promise<FetchUsersResponse> {
   const response = await api.get(`user/list`, {
     params: {
       query: search || null,
     },
-    signal,
   })
 
   return response.data

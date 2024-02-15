@@ -10,6 +10,7 @@ import { PublicNavigatorRoutesProps } from '@routes/public-routes'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
 import { fetchUsers } from '@services/fetch-users-service'
+import { UserListSkeleton } from '@components/user-list-skeleton'
 
 export type ListUsersProps = NativeStackScreenProps<
   PublicNavigatorRoutesProps,
@@ -27,9 +28,11 @@ export function ListUsers({ navigation }: ListUsersProps) {
     navigation.navigate('editUser', { userId })
   }
 
-  const { data: usersList } = useQuery({
+  const { data: usersList, isLoading } = useQuery({
     queryKey: ['users-list'],
-    queryFn: fetchUsers,
+    queryFn: async () => {
+      return await fetchUsers()
+    },
   })
 
   return (
@@ -90,6 +93,8 @@ export function ListUsers({ navigation }: ListUsersProps) {
             </HStack>
           </TouchableOpacity>
         </HStack>
+
+        {isLoading && <UserListSkeleton />}
         <FlatList
           data={usersList?.users}
           keyExtractor={({ id }) => id}
