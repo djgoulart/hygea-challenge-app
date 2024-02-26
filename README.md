@@ -30,9 +30,6 @@ Foram utilizados alguns conceitos de gerenciamento de State Http e uma component
 - React Native
 - Native Base UI
 - TanStack Query + Axios
-- 
-
-## Estrutura de Pastas
 
 ## Requisitos de sistema
 
@@ -53,13 +50,3 @@ if (__DEV__) {
 }
 ```
 - utilize o comando ```npm start``` para inicializar a aplicação no emulador. 
-
-## Sobre a funcionalidade adicional de busca com autocomplete
-A funcionalidade foi parcialmente implementada, e está funcionando como um filtro de busca de usuários, utilizando nome ou email como valor de pesquisa.
-
-## Outras observações
-- Não foram criados testes automatizados para o aplicativo. Devido ao tempo disponível para o desenvolvimento, a prioridade dos testes foi mantida na parte do backend.
-
-- Features secundárias, mas que agregam valor na utilização do usuário como micro animações e feedback visual
-
-- Embora os campos dos formulário possuam validação tanto no aplicativo quanto no backend, o feedback visual dessas validações foi removido do escopo por causa do tempo disponível para a realização do desafio.
